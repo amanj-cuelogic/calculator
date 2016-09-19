@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    
+    <script type="text/javascript" src="calculator.js"></script>
 </head>
 
 <body>
@@ -62,109 +62,30 @@
                     <input type=button value="C" onclick="addtoDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="=" onclick="calculate(OPERATOR);">
+                    <input type=button value="=" onclick="addtoDisplay(this.value);">
                 </td>
                 <td>
                     <input type=button value="/" onclick="addtoDisplay(this.value);">
                 </td>
             </tr>
+            <tr>
+                <td colspan=4>
+                    <span>Operations List</span>
+                    <ul id="op-list">
+                        
+                    </ul>
+                </td>
+            </tr>
         </table>
         <div>
-            <span></span>
+            
         </div>
     </form>
 </body>
-<script>
-        
-        CURRENT = 0;
-        LAST = '';
-        OPERATIONSTRING = '';
-        OPERATOR = '';
-        
-        function addtoDisplay(digit) {
-            
-                
-                //var val = [];
-                var allowedOperations = ['+','-','*','/','C'];
-                
-                if (allowedOperations.indexOf(digit) != -1) {
-                    
-                    OPERATOR = digit;
-                    CURRENT = calculate(digit);
-                    
-                }else{
-                    if (CURRENT.length > 0) {
-                    
-                        CURRENT = CURRENT + digit;
-                        OPERATIONSTRING += CURRENT;
-                        document.getElementById('display').value = CURRENT;
-                        
-                    }else   {
-                        
-                        CURRENT = digit;
-                        OPERATIONSTRING = CURRENT;
-                        document.getElementById('display').value = CURRENT;
-                        
-                    }    
-                }
-                
-                
-                //console.log(OPERATIONSTRING);
-        }
-        
-        function calculate(digit) {
-            switch (digit) {
-                case '+':
-                    if (typeof LAST == 'number') {
-                        LAST = parseInt(LAST) + parseInt(CURRENT);    
-                    }else{
-                        LAST = parseInt(CURRENT);    
-                    }
-                    OPERATIONSTRING += digit;
-                    CURRENT = LAST;
-                    
-                    console.log(OPERATIONSTRING);
-                    break;
-                case '-':
-                    if (typeof LAST == 'number') {
-                        LAST = parseInt(LAST) - parseInt(CURRENT);    
-                    }else{
-                        LAST = parseInt(CURRENT);    
-                    }
-                    
-                    CURRENT = LAST;
-                    OPERATIONSTRING += digit;
-                    break;
-                
-                case '*':
-                    if (typeof LAST == 'number') {
-                        LAST = parseInt(LAST) * parseInt(CURRENT);    
-                    }else{
-                        LAST = parseInt(CURRENT);    
-                    }
-                    CURRENT = LAST;
-                    OPERATIONSTRING += digit;
-                    break;
-                case '/':
-                   
-                    if (typeof LAST == 'number') {
-                        LAST = parseInt(LAST) / parseInt(CURRENT);    
-                    }else{
-                        LAST = parseInt(CURRENT);    
-                    }
-                    CURRENT = LAST;
-                    OPERATIONSTRING += digit;
-                    break;
-                
-                case 'C':
-                    CURRENT = 0;
-                    document.getElementById('display').value = '';
-                    break;
-                
-            }
-            document.getElementById('display').value = CURRENT;
-            return CURRENT;
-        }
-
-    </script>
+<style>
+    table{
+        width: 600px;
+        height: 300px;
+    }
+</style>
 </html>
