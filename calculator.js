@@ -1,4 +1,3 @@
-{
     var val = [];
     
     var CURRENT = 0;
@@ -19,14 +18,14 @@ function addtoDisplay(digit) {
     setDisplay = function(){    
         if (operators.indexOf(digit) != -1) {
             if (digit == '=') {
-                val.push(CURRENT);
-                result = calculate(OPERATOR);
-                printExpression(val,result);
-                this.id++;
+                if (typeof LAST == 'number') {
+                    val.push(CURRENT);
+                    result = calculate(OPERATOR);
+                    printExpression(val,result);
+                }
             }else{
                 val.push(CURRENT);
                 val.push(digit);
-                console.log(OPERATOR);
                 if (OPERATOR != digit && OPERATOR !== null) {
                     result = calculate(OPERATOR);
                     OPERATOR = digit;
@@ -110,46 +109,79 @@ function addtoDisplay(digit) {
     printExpression = function (expr,finalresult) {
         var opexpr = expr.join('');
         opexpr += '='+finalresult;
+        var storageData = localStorage.getItem('oprexpression');
+        if (storageData) {
+            opexprsn = JSON.parse(storageData);
+            this.id = Object.keys(opexprsn).length+1;
+        }else{
+            this.id++;
+        }
         opexprsn[this.id] = {'exprn':opexpr,'result':finalresult};
+        localStorage.setItem('oprexpression',JSON.stringify(opexprsn));
         val = [];
         CURRENT = 0;
         LAST = '';
-        localStorage.setItem('opexpression',JSON.stringify(opexprsn));
-        console.log(localStorage);
-        var ul = document.getElementById('op-list');
-        var li = document.createElement('li');
-        li.appendChild(document.createTextNode(opexpr));
-        li.onclick = showOutput;
-        ul.appendChild(li);
+        var obj = {};
+        obj[1] = opexprsn[this.id];
+        createList(obj);
         
     };
     
-    showOutput = function(){
-        var storageData = localStorage.getItem('opexpression');
-        storageData = JSON.parse(storageData);
-        console.log(storageData);
-        document.getElementById('display').value = storageData[this.id].result;
-        val = [];
-    };
+    
     
     
     
     setDisplay();
 }
-window.onload = function(){
-    var exprStorage = localStorage.getItem('opexpression');
-    exprStorage = JSON.parse(exprStorage);
+
+showOutput = function(){
+        var exprsn_id = this.getAttribute('id');
+        var exprStorage = localStorage.getItem('oprexpression');
+        exprStorage = JSON.parse(exprStorage);
+        CURRENT = exprStorage[exprsn_id].result;
+        document.getElementById('display').value = exprStorage[exprsn_id].result;
+        
+};
+
+deleteExprssn = function(){
+    var removeId = this.getAttribute('id');
     
+    removeId = removeId.split('-');
+    var exprStorage = localStorage.getItem('oprexpression');
+    exprStorage = JSON.parse(exprStorage);
+    delete exprStorage[removeId[1]];
+    exprStorage = JSON.stringify(exprStorage);
+    localStorage.setItem('oprexpression',exprStorage);
+    this.parentNode.remove();
+    
+}
+
+function createList(exprStorage){
     for(var keys in exprStorage){
       if(exprStorage.hasOwnProperty(keys)){
             var ul = document.getElementById('op-list');
             var li = document.createElement('li');
-            li.appendChild(document.createTextNode(exprStorage[keys].exprn));
-            //li.onclick = showOutput;
+            var liexprnString = document.createElement('span');
+            var removeString = document.createElement('span');
+            liexprnString.appendChild(document.createTextNode(exprStorage[keys].exprn));
+            removeString.appendChild(document.createTextNode("Remove"));
+            liexprnString.setAttribute("id",keys);
+            removeString.setAttribute("id",'r-'+keys);
+            removeString.setAttribute("class",'remove');
+            liexprnString.onclick = showOutput;
+            removeString.onclick = deleteExprssn;
+            li.appendChild(liexprnString);
+            li.appendChild(removeString);
             ul.appendChild(li);
             this.id++;
         }  
     }
+}
+
+window.onload = function(){
+    var exprStorage = localStorage.getItem('oprexpression');
+    exprStorage = JSON.parse(exprStorage);
+    createList(exprStorage);
     
 };
-};
+
