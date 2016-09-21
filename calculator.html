@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <script type="text/javascript" src="calculator.js"></script>
+    
 </head>
 
 <body>
@@ -9,63 +9,63 @@
         <table border=10 >
             <tr>
                 <td colspan=4>
-                    <input type=text Name="display" id="display">
+                    <input type=text Name="display" id="display" readonly>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type=button value="0" onclick="addtoDisplay(this.value);">
+                    <input type=button value="0" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="1" onclick="addtoDisplay(this.value);">
+                    <input type=button value="1" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="2" onclick="addtoDisplay(this.value);">
+                    <input type=button value="2" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="+" onclick="addtoDisplay(this.value);">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type=button value="3" onclick="addtoDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="4" onclick="addtoDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="5" onclick="addtoDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="-" onclick="addtoDisplay(this.value);">
+                    <input type=button value="+" onclick="setDisplay(this.value);">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type=button value="6" onclick="addtoDisplay(this.value);">
+                    <input type=button value="3" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="7" onclick="addtoDisplay(this.value);">
+                    <input type=button value="4" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="8" onclick="addtoDisplay(this.value);">
+                    <input type=button value="5" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="*" onclick="addtoDisplay(this.value);">
+                    <input type=button value="-" onclick="setDisplay(this.value);">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type=button value="9" onclick="addtoDisplay(this.value);">
+                    <input type=button value="6" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="C" onclick="addtoDisplay(this.value);">
+                    <input type=button value="7" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="=" onclick="addtoDisplay(this.value);">
+                    <input type=button value="8" onclick="setDisplay(this.value);">
                 </td>
                 <td>
-                    <input type=button value="/" onclick="addtoDisplay(this.value);">
+                    <input type=button value="*" onclick="setDisplay(this.value);">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type=button value="9" onclick="setDisplay(this.value);">
+                </td>
+                <td>
+                    <input type=button value="C" onclick="resetDisplay();">
+                </td>
+                <td>
+                    <input type=button value="=" onclick="setDisplay(this.value);">
+                </td>
+                <td>
+                    <input type=button value="/" onclick="setDisplay(this.value);">
                 </td>
             </tr>
             <tr>
@@ -75,14 +75,13 @@
             </tr>
         </table>
         <span>Operations List</span>
-        <ul id="op-list">
+        <ul name="op-list" id="op-list">
             
         </ul>
-        <div>
-            
-        </div>
+        
     </form>
 </body>
+<script type="text/javascript" src="calculator.js"></script>
 <style>
     table{
         width: 600px;
@@ -90,6 +89,23 @@
     }
     .remove{
         margin-left: 100px;
+    }
+    a{
+        color: blue;
+        cursor: pointer;
+    }
+    tr{
+        background: gray;
+    }
+    input{
+        width: 100%;
+        height: 100%;
+        background: gray;
+        border: gray;
+        font-size: 20px;
+    }
+    tr #display{
+        background: white;
     }
 </style>
 </html>

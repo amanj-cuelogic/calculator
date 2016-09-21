@@ -1,21 +1,17 @@
+(function(){
     var val = [];
-    
     var CURRENT = 0;
-    var LAST = '';
+    var LAST ;
     var operators = ['+','-','*','/','='];
-    var result = 0;
+    var result ;
     var OPERATOR = null ;
-    var OPSTRING ;
-    //localStorage.setItem('opexpression');
     var id = 0;
-    var opexprsn = {};
     
-
-function addtoDisplay(digit) {
-
+    updateDisplay = function(data){
+        document.getElementById('display').value = data;
+    };
     
-    
-    setDisplay = function(){    
+    setDisplay = function(digit){    
         if (operators.indexOf(digit) != -1) {
             if (digit == '=') {
                 if (typeof LAST == 'number') {
@@ -35,153 +31,148 @@ function addtoDisplay(digit) {
                 
             }
             
-            OPSTRING += digit;
-            document.getElementById('display').value = result;
-        }else if(digit == 'C'){
-            CURRENT = 0;
-            LAST  = '';
+            updateDisplay(result);
             
-            document.getElementById('display').value = '';
         }else{
             if (CURRENT.length > 0) {
                 CURRENT = CURRENT + digit;
-                OPSTRING += digit;
-                document.getElementById('display').value = CURRENT;
             }else{
                 CURRENT = digit;
-                OPSTRING = CURRENT;
-                document.getElementById('display').value = CURRENT;
-            }    
-        }
-        
-        
+            }
+            updateDisplay(CURRENT);
+        } 
     };
     
+    
     calculate = function(operator){
-        switch (operator) {
-            case '+':
-                if (typeof LAST == 'number') {
-                    LAST = parseInt(LAST) + parseInt(CURRENT);
-                    
-                }else{
-                    LAST = parseInt(CURRENT);    
-                }
-                OPERATOR = operator;
-                CURRENT = LAST;
-                break;
-            case '-':
-                if (typeof LAST == 'number') {
-                    LAST = parseInt(LAST) - parseInt(CURRENT);    
-                }else{
-                    LAST = parseInt(CURRENT);    
-                }
-                OPERATOR = operator;
-                CURRENT = LAST;
-                break;
-            
-            case '*':
-                if (typeof LAST == 'number') {
-                    LAST = parseInt(LAST) * parseInt(CURRENT);    
-                }else{
-                    LAST = parseInt(CURRENT);    
-                }
-                OPERATOR = operator;
-                CURRENT = LAST;
-                break;
-            case '/':
-                if (typeof LAST == 'number') {
-                    LAST = parseInt(LAST) / parseInt(CURRENT);    
-                }else{
-                    LAST = parseInt(CURRENT);    
-                }
-                OPERATOR = operator;
-                CURRENT = LAST;
-                break;
-            
-            case 'default' :
-                throw new Error('Operation not Specified');
+        
+        add = function(){
+                LAST = parseInt(LAST) + parseInt(CURRENT);
+        };
+        
+        subtract = function(){
+                LAST = parseInt(LAST) - parseInt(CURRENT);    
+        };
+        
+        multiply = function(){
+                LAST = parseInt(LAST) * parseInt(CURRENT);    
+        };
+        
+        divide = function(){
+                LAST = parseInt(LAST) / parseInt(CURRENT);    
+        };
+        
+        if (typeof LAST == 'number') {
+            switch (operator) {
+                case '+':
+                    add();
+                    break;
+                case '-':
+                    subtract();
+                    break;
                 
+                case '*':
+                    multiply();
+                    break;
+                case '/':
+                    divide();
+                    break;
+                
+                case 'default' :
+                    throw new Error('Operation not Specified');
+            }
+        }else{
+            LAST = parseInt(CURRENT);  
         }
         
+        OPERATOR = operator;
+        CURRENT = LAST;
         return CURRENT;
+    };
+    
+    resetVals = function(){
+        
+        CURRENT = LAST;
+        LAST  = '';
+        val= [];
+    };
+    
+    resetDisplay = function(){
+        resetVals();    
+        updateDisplay('');
+    };
+    
+    getStorageData = function(){
+        return JSON.parse(localStorage.getItem('oprexpression'));
+    };
+    
+    setStorageData = function(data){
+        localStorage.setItem('oprexpression',JSON.stringify(data));
     };
     
     printExpression = function (expr,finalresult) {
         var opexpr = expr.join('');
         opexpr += '='+finalresult;
-        var storageData = localStorage.getItem('oprexpression');
-        if (storageData) {
-            opexprsn = JSON.parse(storageData);
-            this.id = Object.keys(opexprsn).length+1;
+        var storageData = getStorageData();
+        if (Object.keys(storageData).length > 0) {
+            id = Object.keys(storageData).length+1;
         }else{
-            this.id++;
+            id++;
         }
-        opexprsn[this.id] = {'exprn':opexpr,'result':finalresult};
-        localStorage.setItem('oprexpression',JSON.stringify(opexprsn));
-        val = [];
-        CURRENT = 0;
-        LAST = '';
+        storageData[id] = {'exprn':opexpr,'result':finalresult};
+        setStorageData(storageData);
+        resetVals();
         var obj = {};
-        obj[1] = opexprsn[this.id];
+        obj[id] = storageData[id];
         createList(obj);
         
     };
     
     
+    createList = function(exprStorage){
+        for(var keys in exprStorage){
+          if(exprStorage.hasOwnProperty(keys)){
+                var ul = document.getElementById('op-list');
+                var li = document.createElement('li');
+                var liexprnString = document.createElement('a');
+                var removeString = document.createElement('a');
+                liexprnString.appendChild(document.createTextNode(exprStorage[keys].exprn));
+                removeString.appendChild(document.createTextNode("Remove"));
+                liexprnString.setAttribute("id",keys);
+                removeString.setAttribute("id",'r-'+keys);
+                removeString.setAttribute("class",'remove');
+                liexprnString.onclick = showOutput;
+                removeString.onclick = deleteExprssn;
+                li.appendChild(liexprnString);
+                li.appendChild(removeString);
+                ul.appendChild(li);
+            }  
+        }
+    };
     
-    
-    
-    setDisplay();
-}
-
-showOutput = function(){
+    showOutput = function(){
         var exprsn_id = this.getAttribute('id');
-        var exprStorage = localStorage.getItem('oprexpression');
-        exprStorage = JSON.parse(exprStorage);
+        var exprStorage = getStorageData();
         CURRENT = exprStorage[exprsn_id].result;
-        document.getElementById('display').value = exprStorage[exprsn_id].result;
-        
-};
-
-deleteExprssn = function(){
-    var removeId = this.getAttribute('id');
+        updateDisplay(exprStorage[exprsn_id].result);
+        //document.getElementById('display').value = exprStorage[exprsn_id].result;
+    };
     
-    removeId = removeId.split('-');
-    var exprStorage = localStorage.getItem('oprexpression');
-    exprStorage = JSON.parse(exprStorage);
-    delete exprStorage[removeId[1]];
-    exprStorage = JSON.stringify(exprStorage);
-    localStorage.setItem('oprexpression',exprStorage);
-    this.parentNode.remove();
     
-}
-
-function createList(exprStorage){
-    for(var keys in exprStorage){
-      if(exprStorage.hasOwnProperty(keys)){
-            var ul = document.getElementById('op-list');
-            var li = document.createElement('li');
-            var liexprnString = document.createElement('span');
-            var removeString = document.createElement('span');
-            liexprnString.appendChild(document.createTextNode(exprStorage[keys].exprn));
-            removeString.appendChild(document.createTextNode("Remove"));
-            liexprnString.setAttribute("id",keys);
-            removeString.setAttribute("id",'r-'+keys);
-            removeString.setAttribute("class",'remove');
-            liexprnString.onclick = showOutput;
-            removeString.onclick = deleteExprssn;
-            li.appendChild(liexprnString);
-            li.appendChild(removeString);
-            ul.appendChild(li);
-            this.id++;
-        }  
-    }
-}
-
-window.onload = function(){
-    var exprStorage = localStorage.getItem('oprexpression');
-    exprStorage = JSON.parse(exprStorage);
-    createList(exprStorage);
+    deleteExprssn = function(){
+        var removeId = this.getAttribute('id');
+        removeId = removeId.split('-');
+        var exprStorage = getStorageData();
+        delete exprStorage[removeId[1]];
+        setStorageData(exprStorage);
+        this.parentNode.remove();
+        resetDisplay();
+    };
     
-};
-
+    loadList = function(){
+        var exprStorage = getStorageData();
+        if (Object.keys(exprStorage).length > 0) {
+            createList(exprStorage);
+        }
+    }();
+})();
