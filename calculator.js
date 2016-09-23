@@ -1,9 +1,9 @@
-(function(){
+var calculator = (function(){
     var val = [];
     var CURRENT = 0;
     var LAST ;
     var operators = ['+','-','*','/','='];
-    var result ;
+    var result = '' ;
     var OPERATOR = null ;
     var id = 0;
     
@@ -11,13 +11,15 @@
         document.getElementById('display').value = data;
     };
     
-    setDisplay = function(digit){    
+    var setDisplay = function(digit){    
         if (operators.indexOf(digit) != -1) {
             if (digit == '=') {
                 if (typeof LAST == 'number') {
                     val.push(CURRENT);
                     result = calculate(OPERATOR);
                     printExpression(val,result);
+                }else{
+                    CURRENT = 0;
                 }
             }else{
                 val.push(CURRENT);
@@ -44,21 +46,21 @@
     };
     
     
-    calculate = function(operator){
+    var calculate = function(operator){
         
-        add = function(){
+        var add = function(){
                 LAST = parseInt(LAST) + parseInt(CURRENT);
         };
         
-        subtract = function(){
+        var subtract = function(){
                 LAST = parseInt(LAST) - parseInt(CURRENT);    
         };
         
-        multiply = function(){
+        var multiply = function(){
                 LAST = parseInt(LAST) * parseInt(CURRENT);    
         };
         
-        divide = function(){
+        var divide = function(){
                 LAST = parseInt(LAST) / parseInt(CURRENT);    
         };
         
@@ -90,27 +92,27 @@
         return CURRENT;
     };
     
-    resetVals = function(){
+    var resetVals = function(){
         
         CURRENT = LAST;
         LAST  = '';
         val= [];
     };
     
-    resetDisplay = function(){
+    var resetDisplay = function(){
         resetVals();    
         updateDisplay('');
     };
     
-    getStorageData = function(){
+    var getStorageData = function(){
         return JSON.parse(localStorage.getItem('oprexpression'));
     };
     
-    setStorageData = function(data){
+    var setStorageData = function(data){
         localStorage.setItem('oprexpression',JSON.stringify(data));
     };
     
-    printExpression = function (expr,finalresult) {
+    var printExpression = function (expr,finalresult) {
         var opexpr = expr.join('');
         opexpr += '='+finalresult;
         var storageData = getStorageData();
@@ -119,6 +121,7 @@
         }else{
             id++;
         }
+        
         storageData[id] = {'exprn':opexpr,'result':finalresult};
         setStorageData(storageData);
         resetVals();
@@ -129,7 +132,7 @@
     };
     
     
-    createList = function(exprStorage){
+    var createList = function(exprStorage){
         for(var keys in exprStorage){
           if(exprStorage.hasOwnProperty(keys)){
                 var ul = document.getElementById('op-list');
@@ -150,7 +153,7 @@
         }
     };
     
-    showOutput = function(){
+    var showOutput = function(){
         var exprsn_id = this.getAttribute('id');
         var exprStorage = getStorageData();
         CURRENT = exprStorage[exprsn_id].result;
@@ -159,7 +162,7 @@
     };
     
     
-    deleteExprssn = function(){
+    var deleteExprssn = function(){
         var removeId = this.getAttribute('id');
         removeId = removeId.split('-');
         var exprStorage = getStorageData();
@@ -169,10 +172,19 @@
         resetDisplay();
     };
     
-    loadList = function(){
+    var loadList = function (){
         var exprStorage = getStorageData();
         if (Object.keys(exprStorage).length > 0) {
             createList(exprStorage);
         }
-    }();
+    };
+    
+    return {
+        setDisplay : setDisplay,
+        resetDisplay : resetDisplay,
+        loadList : loadList
+    };
 })();
+calculator.loadList();
+
+
