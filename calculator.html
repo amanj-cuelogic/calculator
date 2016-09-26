@@ -82,86 +82,11 @@
         
     </form>
     
-    <form Name="calc">
-        <table border=10 >
-            <tr>
-                <td colspan=4>
-                    <input type=text Name="display" id="display" readonly>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type=button value="0" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="1" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="2" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="+" onclick="t2.setDisplay(this.value);">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type=button value="3" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="4" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="5" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="-" onclick="t2.setDisplay(this.value);">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type=button value="6" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="7" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="8" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="*" onclick="t2.setDisplay(this.value);">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type=button value="9" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="C" onclick="t2.resetDisplay();">
-                </td>
-                <td>
-                    <input type=button value="=" onclick="t2.setDisplay(this.value);">
-                </td>
-                <td>
-                    <input type=button value="/" onclick="t2.setDisplay(this.value);">
-                </td>
-            </tr>
-            <tr>
-                <td colspan=4>
-                    
-                </td>
-            </tr>
-        </table>
-        <span>Operations List</span>
-        <ul name="op-list" id="op-list">
-            
-        </ul>
-        
-    </form>
+    
 </body>
 <script type="text/javascript" src="calculator.js"></script>
 <script>
     var t1 = new Calculator();
-    //t1.setStorageData();
     t1.loadList();
     var t2 = new Calculator();
     t2.loadList();
