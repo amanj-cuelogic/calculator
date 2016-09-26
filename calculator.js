@@ -1,138 +1,162 @@
-var calculator = (function(){
-    var val = [];
-    var CURRENT = 0;
-    var LAST ;
-    var operators = ['+','-','*','/','='];
-    var result = '' ;
-    var OPERATOR = null ;
+var Calculator = (function(){
+    var priv = {};
     var id = 0;
+    var operation_map = {'+' : 'add','-' : 'subtract','*' : 'multiply', '/' : 'divide'};
     
-    updateDisplay = function(data){
-        document.getElementById('display').value = data;
+    function CalculatorConstructor() {
+        this.id = id++;
+        priv[this.id] = {};
+        priv[this.id].val = [];
+        priv[this.id].CURRENT = '';
+        priv[this.id].LAST = '';
+        priv[this.id].operators = ['+','-','*','/','='];
+        priv[this.id].result = '';
+        priv[this.id].OPERATOR = null;
+        priv[this.id].id = 0;
+        
+    
+        this.getStorageData = function(){
+            console.log(localStorage.getItem('oprexpression-'+this.id));
+            return localStorage.getItem('oprexpression-'+this.id)?JSON.parse(localStorage.getItem('oprexpression-'+this.id)):{};
+        };
+    
+        this.setStorageData = function(data = {}){
+            localStorage.setItem('oprexpression-'+this.id,JSON.stringify(data));
+        };
+        
+        
+    }
+    
+    CalculatorConstructor.prototype.updateDisplay = function(data){
+        document.getElementById("display").value = data;
     };
     
-    var setDisplay = function(digit){    
-        if (operators.indexOf(digit) != -1) {
-            if (digit == '=') {
-                if (typeof LAST == 'number') {
-                    val.push(CURRENT);
-                    result = calculate(OPERATOR);
-                    printExpression(val,result);
+    CalculatorConstructor.prototype.setDisplay = function(digit){
+        var operation;
+        if (priv[this.id].operators.indexOf(digit) != -1) {
+            if (digit == "=") {
+                if (typeof priv[this.id].LAST == "number") {
+                    priv[this.id].val.push(priv[this.id].CURRENT);
+                    if (typeof priv[this.id].LAST == 'number') {
+                        priv[this.id].result = operation_map[digit]();
+                    }else{
+                        priv[this.id].LAST = parseInt(priv[this.id].CURRENT);  
+                    }
+                    priv[this.id].OPERATOR = digit;
+                    priv[this.id].CURRENT = '';
+                    //console.log(priv[this.id]);
+                    this.printExpression(priv[this.id].val,priv[this.id].result);
                 }else{
-                    CURRENT = 0;
+                    priv[this.id].CURRENT = 0;
                 }
             }else{
-                val.push(CURRENT);
-                val.push(digit);
-                if (OPERATOR != digit && OPERATOR !== null) {
-                    result = calculate(OPERATOR);
-                    OPERATOR = digit;
+                priv[this.id].val.push(priv[this.id].CURRENT);
+                priv[this.id].val.push(digit);
+                if (priv[this.id].OPERATOR != digit && priv[this.id].OPERATOR !== null) {
+                    priv[this.id].result = operation_map[priv[this.id].OPERATOR]();
+                    priv[this.id].OPERATOR = digit;
                 }else{
-                    result = calculate(digit);    
+                    operation = operation_map[digit];
+                    priv[this.id].result = this.operation();
                 }
-                
             }
             
-            updateDisplay(result);
-            
+            this.updateDisplay(priv[this.id].result);
         }else{
-            if (CURRENT.length > 0) {
-                CURRENT = CURRENT + digit;
+            if (priv[this.id].CURRENT != '') {
+                priv[this.id].CURRENT = priv[this.id].CURRENT + digit;
             }else{
-                CURRENT = digit;
+                priv[this.id].CURRENT = digit;
             }
-            updateDisplay(CURRENT);
-        } 
-    };
-    
-    
-    var calculate = function(operator){
-        
-        var add = function(){
-                LAST = parseInt(LAST) + parseInt(CURRENT);
-        };
-        
-        var subtract = function(){
-                LAST = parseInt(LAST) - parseInt(CURRENT);    
-        };
-        
-        var multiply = function(){
-                LAST = parseInt(LAST) * parseInt(CURRENT);    
-        };
-        
-        var divide = function(){
-                LAST = parseInt(LAST) / parseInt(CURRENT);    
-        };
-        
-        if (typeof LAST == 'number') {
-            switch (operator) {
-                case '+':
-                    add();
-                    break;
-                case '-':
-                    subtract();
-                    break;
-                
-                case '*':
-                    multiply();
-                    break;
-                case '/':
-                    divide();
-                    break;
-                
-                case 'default' :
-                    throw new Error('Operation not Specified');
-            }
-        }else{
-            LAST = parseInt(CURRENT);  
+            this.updateDisplay(priv[this.id].CURRENT);
         }
+    };
+    
+    CalculatorConstructor.prototype.calculate = function(operator){
         
-        OPERATOR = operator;
-        CURRENT = LAST;
-        return CURRENT;
+        //var add = function(curr_obj){
+        //        curr_obj.LAST = parseInt(curr_obj.LAST) + parseInt(curr_obj.CURRENT);
+        //};
+        //
+        //var subtract = function(curr_obj){
+        //        curr_obj.LAST = parseInt(curr_obj.LAST) - parseInt(curr_obj.CURRENT);    
+        //};
+        //
+        //var multiply = function(curr_obj){
+        //        curr_obj.LAST = parseInt(curr_obj.LAST) * parseInt(curr_obj.CURRENT);    
+        //};
+        //
+        //var divide = function(curr_obj){
+        //        curr_obj.LAST = parseInt(curr_obj.LAST) / parseInt(curr_obj.CURRENT);    
+        //};
+        //
+        //if (typeof priv[this.id].LAST == 'number') {
+        //    switch (operator) {
+        //        case '+':
+        //            add(priv[this.id]);
+        //            break;
+        //        case '-':
+        //            subtract(priv[this.id]);
+        //            break;
+        //        
+        //        case '*':
+        //            multiply(priv[this.id]);
+        //            break;
+        //        case '/':
+        //            divide(priv[this.id]);
+        //            break;
+        //        
+        //        case 'default' :
+        //            throw new Error('Operation not Specified');
+        //    }
+        //}else{
+        //    priv[this.id].LAST = parseInt(priv[this.id].CURRENT);  
+        //}
+        //
+        //priv[this.id].OPERATOR = operator;
+        //priv[this.id].CURRENT = '';
+        //return priv[this.id].LAST;
     };
     
-    var resetVals = function(){
+    CalculatorConstructor.prototype.resetVals = function(){
         
-        CURRENT = LAST;
-        LAST  = '';
-        val= [];
+        priv[this.id].CURRENT = '';
+        priv[this.id].LAST  = '';
+        priv[this.id].val= [];
     };
     
-    var resetDisplay = function(){
-        resetVals();    
-        updateDisplay('');
+    CalculatorConstructor.prototype.resetDisplay = function(){
+        this.resetVals();    
+        this.updateDisplay('');
     };
     
-    var getStorageData = function(){
-        return JSON.parse(localStorage.getItem('oprexpression'));
-    };
-    
-    var setStorageData = function(data){
-        localStorage.setItem('oprexpression',JSON.stringify(data));
-    };
-    
-    var printExpression = function (expr,finalresult) {
+    CalculatorConstructor.prototype.printExpression = function (expr,finalresult) {
         var opexpr = expr.join('');
         opexpr += '='+finalresult;
-        var storageData = getStorageData();
-        if (Object.keys(storageData).length > 0) {
-            id = Object.keys(storageData).length+1;
+        var storageData = this.getStorageData();
+        console.log(storageData); 
+        if (typeof storageData[this.id] == 'object' && Object.keys(storageData[this.id]).length > 0) {
+            priv[this.id].id = Object.keys(storageData[this.id]).length+1;
         }else{
-            id++;
+            priv[this.id].id++;
         }
-        
-        storageData[id] = {'exprn':opexpr,'result':finalresult};
-        setStorageData(storageData);
-        resetVals();
+        console.log(typeof storageData[this.id]);
+        if(typeof storageData[this.id] != 'object'){
+            storageData[this.id] = {};
+        }
+        storageData[this.id][priv[this.id].id] = {'exprn':opexpr,'result':finalresult};
+        this.setStorageData(storageData);
+        //console.log(this.getStorageData()); 
+        this.resetVals();
         var obj = {};
-        obj[id] = storageData[id];
-        createList(obj);
+        obj[priv[this.id].id] = storageData[this.id][priv[this.id].id]
+        this.createList(obj);
         
     };
     
     
-    var createList = function(exprStorage){
+    CalculatorConstructor.prototype.createList = function(exprStorage){
+        var self = this;
         for(var keys in exprStorage){
           if(exprStorage.hasOwnProperty(keys)){
                 var ul = document.getElementById('op-list');
@@ -144,8 +168,8 @@ var calculator = (function(){
                 liexprnString.setAttribute("id",keys);
                 removeString.setAttribute("id",'r-'+keys);
                 removeString.setAttribute("class",'remove');
-                liexprnString.onclick = showOutput;
-                removeString.onclick = deleteExprssn;
+                liexprnString.onclick = this.showOutput.bind(this);
+                removeString.onclick = this.deleteExprssn.bind(this);
                 li.appendChild(liexprnString);
                 li.appendChild(removeString);
                 ul.appendChild(li);
@@ -153,38 +177,34 @@ var calculator = (function(){
         }
     };
     
-    var showOutput = function(){
-        var exprsn_id = this.getAttribute('id');
-        var exprStorage = getStorageData();
-        CURRENT = exprStorage[exprsn_id].result;
-        updateDisplay(exprStorage[exprsn_id].result);
-        //document.getElementById('display').value = exprStorage[exprsn_id].result;
+    CalculatorConstructor.prototype.showOutput = function(){
+        
+        var exprsn_id = "2";
+        var exprStorage = this.getStorageData();
+        priv[this.id].CURRENT = exprStorage[this.id][exprsn_id].result;
+        this.updateDisplay(priv[this.id].CURRENT);
+        //document.getElementById('display  ').value = exprStorage[exprsn_id].result;
     };
     
     
-    var deleteExprssn = function(){
-        var removeId = this.getAttribute('id');
+    CalculatorConstructor.prototype.deleteExprssn = function(){
+        var removeId = "r-1";
         removeId = removeId.split('-');
-        var exprStorage = getStorageData();
-        delete exprStorage[removeId[1]];
-        setStorageData(exprStorage);
+        var exprStorage = this.getStorageData();
+        delete exprStorage[this.id][removeId[1]];
+        this.setStorageData(exprStorage);
         this.parentNode.remove();
-        resetDisplay();
+        this.resetDisplay();
     };
     
-    var loadList = function (){
-        var exprStorage = getStorageData();
-        if (Object.keys(exprStorage).length > 0) {
-            createList(exprStorage);
+    CalculatorConstructor.prototype.loadList = function (){
+        var exprStorage = this.getStorageData();
+        if (typeof exprStorage[this.id] == 'object' && Object.keys(exprStorage).length > 0) {
+            this.createList(exprStorage[this.id]);
         }
     };
     
-    return {
-        setDisplay : setDisplay,
-        resetDisplay : resetDisplay,
-        loadList : loadList
-    };
-})();
-calculator.loadList();
-
-
+    
+    return CalculatorConstructor;
+}());
+//localStorage.clear();
