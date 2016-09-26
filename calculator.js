@@ -65,7 +65,7 @@ var Calculator = (function(){
     }
     
     CalculatorConstructor.prototype.updateDisplay = function(data){
-        document.getElementById("display").value = data;
+        document.getElementById("display-"+this.id).value = data;
     };
     
     CalculatorConstructor.prototype.setDisplay = function(digit){
@@ -157,7 +157,7 @@ var Calculator = (function(){
     CalculatorConstructor.prototype.createList = function(exprStorage){
         for(var keys in exprStorage){
           if(exprStorage.hasOwnProperty(keys)){
-                var ul = document.getElementById('op-list');
+                var ul = document.getElementById('op-list-'+this.id);
                 var li = document.createElement('li');
                 var liexprnString = document.createElement('a');
                 var removeString = document.createElement('a');
